@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>images_board</title>
+</head>
+<body>
+    <h1>🧩 Memorize your amazing moments...</h1>
+    <h2>Lastest sharing:</h2>
+    <div id="main">
+        <ul v-if="images.length > 0" v-for="image in images" :key="images.id">
+            <li><img v-blind:src="image.url" @click="image.id">{{image.title}}</li>
+        </ul>
+
+    </div>
+    <script src="app.js" type="module" crossorigin="use-credentials"></script>
+</body>
+</html>
