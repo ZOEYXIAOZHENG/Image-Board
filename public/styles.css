@@ -1,0 +1,33 @@
+* {
+    box-sizing: border-box;
+    background-color: rgb(222, 202, 145);
+    color: rgb(254, 252, 252);
+}
+
+img {
+    width: 400px;
+    height: 300px;
+    margin-bottom: 10px;
+}
+
+.container {
+    display: inline-block;
+}
+
+.box {
+    flex-wrap: wrap;
+    display: flex;
+    flex-direction: row;
+    border: brown 2px soild;
+    width: 420px;
+    height: 320px;
+}
+
+button {
+    width: 80px;
+    height: 30px;
+    background-color: orangered;
+    color: rgb(255, 255, 255);
+    border-radius: 12px;
+    border: rgb(86, 209, 30) 2px solid;
+}
