@@ -8,21 +8,23 @@
     <title>images_board</title>
 </head>
 <body>
-    <h1>🧩 Memory Bank</h1>
-    <h2>Save you Memory Now!</h2>
+    <h1>I  want  to  EAT...</h1>
+    <h2> ❤ sharing  your favourite Restaurants / Food / Menu:</h2>
     <div id="main">
         <input v-model="title" name="title" placeholder="title"> 
          <!-- v-model directive to automatically collect the values that the user enters.  -->
         <input v-model="username" name="username" placeholder="username">
         <input v-model="description" name="description" accept="text" placeholder="description">
         <input type="file" name="file" id="file"  accept="image/*" @change="setFile">
-        <button @click="upload">Upload</button>
-        <h2>Lastest upload:</h2>
+        <button @click="upload" class="bubbly-button">Go</button>
+        <h2> ❤ lastest Post:</h2>
         <div class="container" v-if="images.length > 0 " v-for="image in images" :key="images.id" >
             <div class="box">
             <img v-bind:src="image.url" @click="image.id" >
             <p>{{image.title}}</p>
             </div>
+            <my-component></my-component>
+            <image-modal v-if="selectedImageId" :id="selectedImageId" @close="closeModal"></image-modal>
         </div>  
 
     </div>

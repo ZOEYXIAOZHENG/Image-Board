@@ -25,12 +25,29 @@ Vue.createApp({
         upload() {
             const formData = new FormData();
             formData.append("file", this.file);
+            formData.append("username", this.username);
             formData.append("title", this.title);
             formData.append("description", this.description);
             fetch("/upload", {
                 method: "POST",
-                body: FormData,
+                body: formData,
             });
         },
     },
+
+    components: {
+        "my-component": {
+            template: `
+            <div>
+                heading: THIS IS MY Component!
+                <img>
+                <h2>{{title}}<h2>
+                <h4>{{username}}</h4>
+                <p>{{description}}</p>
+            </div>
+
+            `,
+        },
+    },
+    props: [`{{id}}`],
 }).mount("#main");

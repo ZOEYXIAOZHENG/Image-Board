@@ -15,3 +15,17 @@ module.exports.getImages = function () {
         `
     );
 };
+
+module.exports.uploadImages = function (url, title, username, description) {
+    return db
+        .query(
+            `INSERT INTO images
+        (url, title, username,  description)
+        VALUES ($1, $2, $3, $4)
+        returning *;`,
+            [url, username, title, description]
+        )
+        .then(function (results) {
+            return results.rows;
+        });
+};
