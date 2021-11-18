@@ -20,10 +20,10 @@
         <h2> ❤ lastest Post:</h2>
         <div class="container" v-if="images.length > 0 " v-for="image in images" :key="images.id" >
             <div class="box">
-            <img v-bind:src="image.url" @click="image.id" >
+            <img v-bind:src="image.url" @click="image.id" alt="image">
             <p>{{image.title}}</p>
             </div>
-            <my-component></my-component>
+            <user-comment :some-prop="📝📝📝"></user-comment>
             <image-modal v-if="selectedImageId" :id="selectedImageId" @close="closeModal"></image-modal>
         </div>  
 

@@ -8,15 +8,11 @@ if (process.env.NODE_ENV == "production") {
 } else {
     secrets = require("./secrets"); // in dev they are in secrets.json which is listed in .gitignore
 }
-console.log(AWS_KEY);
-console.log(AWS_SECRET);
+
 const s3 = new aws.S3({
     accessKeyId: AWS_KEY,
-
     secretAccessKey: AWS_SECRET,
-}); // is an instance of an AWS user -> it's yet another object,
-// with methods on it! and it will allow us to communicate
-// with AWS S3, i.e. upload files :D
+}); // is an instance of an AWS user 
 
 module.exports.upload = (req, res, next) => {
     if (!req.file) {

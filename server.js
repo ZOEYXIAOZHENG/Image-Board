@@ -4,7 +4,6 @@ const db = require("./db.js");
 
 const multer = require("multer");
 const uidSafe = require("uid-safe");
-const path = require("path");
 const s3 = require("./s3");
 
 const diskStorage = multer.diskStorage({
@@ -43,7 +42,6 @@ app.get("/images.json", (req, res) => {
 
 // When user clicks the submit button, a POST request containing all of the data should be made.
 app.post("/upload", uploader.single("file"), s3.upload, (req, res) => {
-    console.log("*****************");
     console.log(req.body);
     console.log("our file will be reachable at its bucket's url");
     const aws = "https://s3.amazonaws.com/";
@@ -66,8 +64,43 @@ app.post("/upload", uploader.single("file"), s3.upload, (req, res) => {
         });
 });
 
+app.get("/images/:id.json", (req, res) => {
+    db.getImageById(req.params.id)
+        .then((result) => {
+            res.json(result.rows);
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+});
+
+app.get("/more-images.json", (req, res) => {
+    db.getMoreImages(req.params.startId, req.params.offset).then(({ rows }) => {
+        res.json(rows);
+    });
+});
+
+app.get("/comment/:imageId.json", (req, res) => {
+    db.getComments(req.params.imageId).then((result) => {
+        res.json(result.rows);
+    });
+});
+
+app.post("/comment.json", (req, res) => {
+    const { comment, username, image_id } = req.body;
+    db.addComment(comment, username, image_id)
+        .then(({ rows }) =>
+            res.json({
+                comment: rows[0],
+            })
+        )
+        .catch((err) => {
+            console.log(err);
+        });
+});
+
 app.get("*", (req, res) => {
     res.sendFile(`${__dirname}/index.html`);
 });
 
-app.listen(8080, () => console.log(`I'm listening.`));
+app.listen(8080, () => console.log("I'm listening."));
