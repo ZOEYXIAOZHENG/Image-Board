@@ -15,29 +15,38 @@ h1 {
     margin-top: 60px;
     text-align: center;
     text-shadow: 0 1px 1px #fff;
+    margin-left: 30px;
 }
 h2 {
     font-family: "Lato", sans-serif;
     font-weight: 300;
     line-height: 58px;
+    margin-left: 30px;
     /* margin: 0 0 58px; */
 }
 
 input {
-    width: 250px;
+    width: 300px;
     height: 45px;
-    margin-left: 10px;
-    border-radius: 12px;
+    margin-left: 20px;
+    border-radius: 10px;
     font-size: large;
 }
 
 img {
     width: 400px;
-    height: 300px;
+    height: auto;
     margin-bottom: 10px;
+    margin-left: 20px;
+    transition: all 0.2s ease-in-out;
 }
 
-.container {
+img:hover {
+    box-shadow: 0 0 10px #ccc;
+    transform: scale(1.1);
+}
+
+.images {
     display: inline-block;
 }
 
@@ -50,29 +59,28 @@ img {
     height: 320px;
 }
 
-button {
-    font-family: "Helvetica", "Arial", sans-serif;
-    text-align: center;
-    background-color: #ff0080;
-}
-button:hover {
-    color: #ffff;
-    background-color: #f98807;
-    font-size: 13px;
+button:hover,
+.more:hover {
+    color: #ff0080;
+    background-color: #fff;
     font-weight: bolder;
+    border: #ff0080 5px solid;
+    font-size: 20px;
+    padding: 7px 1.8em;
 }
-.bubbly-button {
+.bubbly-button,
+.more {
     font-family: "Helvetica", "Arial", sans-serif;
     display: inline-block;
-    font-size: 1em;
-    padding: 0.8em 2em;
-    margin-top: 100px;
+    font-size: 20px;
+    padding: 12px 2em;
+    margin-top: 60px;
     margin-bottom: 60px;
     -webkit-appearance: none;
     appearance: none;
     background-color: #ff0080;
     color: white;
-    border-radius: 5px;
+    border-radius: 20px;
     border: none;
     cursor: pointer;
     position: relative;
@@ -85,4 +93,118 @@ button:hover {
     cursor: pointer;
     /* background-color: red; */
     font: red;
+}
+.blur {
+    filter: blur(30px);
+    opacity: 0.7;
+}
+.disable-scroll {
+    overflow: hidden;
+    height: 100vh;
+}
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 3;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+.container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: repeat(3, 33.33%);
+    margin-left: 30px;
+    margin-right: 20px;
+}
+
+.more {
+    margin: 0 auto;
+    display: block;
+}
+.close {
+    position: absolute;
+    right: 32px;
+    top: 32px;
+    width: 32px;
+    height: 32px;
+    opacity: 0.3;
+}
+.close:hover {
+    opacity: 1;
+}
+.close:before,
+.close:after {
+    position: absolute;
+    left: 15px;
+    content: " ";
+    height: 33px;
+    width: 2px;
+    background-color: #333;
+}
+.close:before {
+    transform: rotate(45deg);
+}
+.close:after {
+    transform: rotate(-45deg);
+}
+
+.modal img {
+    width: auto;
+    height: 90vh;
+    position: absolute;
+    left: 10vw;
+}
+.modal #info-box {
+    width: 50vw;
+    height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 5vh 5vw;
+    flex-wrap: wrap;
+    z-index: 30;
+    position: absolute;
+    right: 10vw;
+}
+
+#comment-container,
+.add-comment {
+    width: 50vw;
+    height: 40vh;
+    display: grid;
+    place-items: center;
+    flex-wrap: wrap;
+    z-index: 30;
+}
+
+#comment-username {
+    width: 150px;
+    height: 35px;
+}
+
+#comment-text {
+    width: 220px;
+    height: 100px;
+}
+
+.next-button,
+.prev-button {
+    z-index: 99;
+    position: absolute;
+    top: 50vh;
+    width: 80px;
+    height: auto;
+    max-width: 100%;
+}
+.next-button {
+    right: 50px;
+    background: url(./next.png);
+}
+
+.prev-button {
+    left: 50px;
+    background: url(./prev.png);
 }

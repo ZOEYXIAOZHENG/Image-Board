@@ -8,26 +8,43 @@
     <title>images_board</title>
 </head>
 <body>
-    <h1>I  want  to  EAT...</h1>
-    <h2> ❤ sharing  your favourite Restaurants / Food / Menu:</h2>
+    <h1 class="text">I  want  to  EAT...</h1>
+    <h2 class="text"> ❤ sharing  your favourite Restaurants / Food / Menu:</h2>
     <div id="main">
+        <div id="title-bar">
         <input v-model="title" name="title" placeholder="title"> 
          <!-- v-model directive to automatically collect the values that the user enters.  -->
         <input v-model="username" name="username" placeholder="username">
-        <input v-model="description" name="description" accept="text" placeholder="description">
+        <input v-model="description" name="description" accept="text" placeholder="Description / Address ">
+        </div>
+
+        <div id="file-upload">
         <input type="file" name="file" id="file"  accept="image/*" @change="setFile">
+        <!-- <label for="file"><span>choose a file</span></label> -->
         <button @click="upload" class="bubbly-button">Go</button>
-        <h2> ❤ lastest Post:</h2>
-        <div class="container" v-if="images.length > 0 " v-for="image in images" :key="images.id" >
-            <div class="box">
-            <img v-bind:src="image.url" @click="image.id" alt="image">
-            <p>{{image.title}}</p>
+        </div>
+
+        <h2 class="text"> ❤ lastest Post:</h2>
+        <div class="container" v-if="images.length > 0 " >
+            <div class="images"  v-for="image in images">
+                <a v-if="images.length>0" :href="`/${image.id}`" class="image">
+                    <img :src="image.url" @click.prevent="click(image.id)" :alt="image.title">
+                 </a>
+            <h4>{{image.title}}</h4>
             </div>
-            <user-comment :some-prop="📝📝📝"></user-comment>
-            <image-modal v-if="selectedImageId" :id="selectedImageId" @close="closeModal"></image-modal>
-        </div>  
+            
+        </div>
+
+        <image-modal v-if="selectedImageId" :selected-image-id="selectedImageId" @close="closeModal" @prev="showPrev" @next="showNext"></image-modal>
+
+        <div v-if="moreImages" class="load-more">
+            <button class="more" @click="loadMore">More</button>
+        </div>
 
     </div>
+
+
     <script src="/js/app.js" type="module" crossorigin="use-credentials"></script>
+    <script src="/js/script.js" crossorigin="use-credentials"></script>
 </body>
 </html>

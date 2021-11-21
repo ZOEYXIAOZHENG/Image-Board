@@ -7,14 +7,16 @@ const db = spicedPg(
 
 console.log("i am connecting:", database);
 
-module.exports.getImages = function () {
-    return db.query(
-        `SELECT *
-        FROM images
-        ORDER BY created_at DESC 
-        LIMIT 9;
-        `
-    );
+module.exports.getImages = function (smallestImageId) {
+    const q = `SELECT url, title, created_at AS date, id,
+                        (SELECT id FROM images
+                        ORDER BY id ASC
+                        LIMIT 1) AS "lowestId"
+                    FROM images
+                    ${smallestImageId ? "WHERE id < $1" : ""}
+                    ORDER BY created_at DESC
+                    LIMIT 9`;
+    return db.query(q, smallestImageId && [smallestImageId]);
 };
 
 module.exports.uploadImages = function (url, title, username, description) {
@@ -27,48 +29,40 @@ module.exports.uploadImages = function (url, title, username, description) {
             [url, username, title, description]
         )
         .then(function (results) {
-            return results.rows;
+            return results;
         });
 };
 
 // to get image info by id
 module.exports.getImageById = function (id) {
-    return db.query(`SELECT * FROM images WHERE id = ${id}`);
+    const query = `SELECT url, title, description, username, created_at AS date,
+                        (SELECT id FROM images
+                        WHERE id < $1
+                        ORDER BY id DESC
+                        LIMIT 1) AS "prevId",
+                        (SELECT id FROM images
+                        WHERE id > $1
+                        LIMIT 1) AS "nextId"
+                    FROM images
+                    WHERE id = $1`;
+    return db.query(query, [id]);
 };
 
-module.exports.getMoreImages = function (startId, offset) {
-    return db
-        .query(
-            `SELECT * FROM images
-    WHERE id < $1
-    ORDER BY id DESC
-    LIMIT 9
-    OFFSET $2`,
-            [startId, offset]
-        )
-        .then(({ rows }) => rows);
+module.exports.getComments = function (selectedImageId) {
+    const q = `SELECT username, comment, created_at AS date
+                    FROM comments
+                    WHERE image_id = $1
+                    ORDER BY created_at DESC`;
+    return db.query(q, [selectedImageId]);
 };
 
-module.exports.getComments = function (id) {
-    return db
-        .query(
-            `SELECT *
-        FROM comments
-        WHERE image_id = $1;
-        `,
-            [id]
-        )
-        .then(function (results) {
-            return results.rows;
-        });
-};
-
-module.exports.addComment = function (id, comment, username) {
+module.exports.addComment = function (selectedImageId, comment, username) {
     return db.query(
         `INSERT INTO comments
-        (comment, username, image_id)
-        VALUES ($1, $2, $3)
+        (image_id, comment, username)
+        VALUES ($1, $2, $3) 
+        RETURNING *
         `,
-        [comment, username, id]
+        [selectedImageId, comment, username]
     );
 };

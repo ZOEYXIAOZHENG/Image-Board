@@ -1,10 +1,15 @@
 const express = require("express");
 const app = express();
 const db = require("./db.js");
+const moment = require("moment");
 
 const multer = require("multer");
 const uidSafe = require("uid-safe");
 const s3 = require("./s3");
+const path = require("path");
+
+app.use(express.static("./public"));
+app.use(express.json());
 
 const diskStorage = multer.diskStorage({
     destination: function (req, file, callback) {
@@ -24,18 +29,15 @@ const uploader = multer({
     },
 });
 
-app.use(express.static("./public"));
-app.use(express.json());
+//---------------------------  ROUTE  ------------------------------
 
 app.get("/images.json", (req, res) => {
-    console.log("request to images was made");
     db.getImages()
         .then((images) => {
-            console.log(images.rows);
-            res.json(images.rows);
+            return res.json(images);
         })
         .catch((err) => {
-            console.log(err);
+            console.log("err in GET/images.json:", err);
             res.sendStatus(500);
         });
 });
@@ -55,8 +57,11 @@ app.post("/upload", uploader.single("file"), s3.upload, (req, res) => {
         req.body.title,
         req.body.description
     )
-        .then((results) => {
-            res.json(results);
+        .then((images) => {
+            images.rows[0].publDate = moment(
+                images.rows[0].created_at
+            ).fromNow();
+            res.json(images.rows[0]);
         })
         .catch((err) => {
             console.log("error in uploading images:", err);
@@ -64,38 +69,57 @@ app.post("/upload", uploader.single("file"), s3.upload, (req, res) => {
         });
 });
 
-app.get("/images/:id.json", (req, res) => {
-    db.getImageById(req.params.id)
-        .then((result) => {
-            res.json(result.rows);
+app.get("/image/:id", (req, res) => {
+    const { id } = req.params;
+
+    db.getImageById(id)
+        .then((image) => {
+            if (image.rows.length !== 0) {
+                image.rows[0].publDate = moment(image.rows[0].date).fromNow();
+            }
+            // we want to send back the newly uploaded image object to our client side
+            return res.json(image);
         })
         .catch((err) => {
-            console.log(err);
+            console.log("err in getImageById() on GET /selected-image/id", err);
+            res.sendStatus(500);
         });
 });
 
-app.get("/more-images.json", (req, res) => {
-    db.getMoreImages(req.params.startId, req.params.offset).then(({ rows }) => {
-        res.json(rows);
-    });
-});
-
-app.get("/comment/:imageId.json", (req, res) => {
-    db.getComments(req.params.imageId).then((result) => {
-        res.json(result.rows);
-    });
-});
-
-app.post("/comment.json", (req, res) => {
-    const { comment, username, image_id } = req.body;
-    db.addComment(comment, username, image_id)
-        .then(({ rows }) =>
-            res.json({
-                comment: rows[0],
-            })
-        )
+app.get("/more-images/:smallestImageId", (req, res) => {
+    const { smallestImageId } = req.params;
+    db.getImages(smallestImageId)
+        .then((images) => {
+            return res.json(images);
+        })
         .catch((err) => {
-            console.log(err);
+            console.log("err in getMoreImages() on GET /more-images/", err);
+            res.sendStatus(500);
+        });
+});
+
+app.get("/comments/:imageId", (req, res) => {
+    const { imageId } = req.params;
+    db.getComments(imageId)
+        .then((comments) => {
+            return res.json(comments);
+        })
+        .catch((err) => {
+            console.log("err in getComments() on GET /comments.json", err);
+            res.sendStatus(500);
+        });
+});
+
+app.post("/comments", (req, res) => {
+    const { imageId, username, comment } = req.body;
+
+    db.addComment(imageId, username, comment)
+        .then((comment) => {
+            res.json(comment.rows[0]);
+        })
+        .catch((err) => {
+            console.log("err in addComment on POST /add-comment", err);
+            res.sendStatus(500);
         });
 });
 
